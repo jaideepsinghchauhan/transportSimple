@@ -27,27 +27,21 @@ function AddDetails(){
 	var start = document.getElementById('startPoint').value;
 	var end = document.getElementById('endPoint').value;
      if(!start || !end ){
-        console.log('Enter proper details');
+        console.log('Enter proper details');  // validating input properties.
 		return;
 	}else{
 		var travelDetails = [];
 		travelDetails.startPoint = start;
 		travelDetails.endPoint = end;
 		console.log(travelDetails);
-		travelDetailsArray.push(travelDetails);
+		travelDetailsArray.push(travelDetails); // storing i/o values in array and calling drawmethod.
 		currentTravelDetails = travelDetails;
 		drawCanvas();
-	//	createLine(travelDetails);
-	//	initialX=initialX+lineLength+circleDiff;
 	}
 }  
 	function drawCanvas(){
 	       // debugger;
-			if(travelDetailsArray.length == 1){
-			console.log("one value draw zero with text");
-			createCircle(initialX, initialY,0);	
-			}else{
-			    console.log("clear canvas");
+			    console.log("clear canvas");  // clearing canvas everytime use presses enter
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				ctx.rect(20, 20, 1150, 700);
 				 initialX=100;
@@ -218,7 +212,6 @@ function AddDetails(){
 			}	
 			console.log('-------------------------------------------------------');
 		}
-	}	
 }
 	
 	
@@ -235,49 +228,7 @@ function AddDetails(){
 	}
 	
 	
-	function createLine(obj){
-			console.log(travelDetailsArray);
-		if(	travelDetailsArray.length > 1 ){
-				if((travelDetailsArray[travelDetailsArray.length-2].endPoint) !== obj.startPoint){ //checking whether it should go up
-					
-					
-
-				  if(flag === false){   // MEANS its on lower level
-				  createArrow(color);
-				   initialY = initialY -100;
-				    drawArc(initialX+14, initialY+20, 80, 	25,   95, false,  "green");
-				   drawArc(initialX+160, initialY+90, 82, 205, -80, false,  "blue");
-				   flag=true;
-				  }else{  // means its on upper level (2)
-
-				  
-				  }
-				  
-				}if((travelDetailsArray[travelDetailsArray.length-2].startPoint) === obj.startPoint && 
-				    ((travelDetailsArray[travelDetailsArray.length-2].endPoint) === obj.endPoint)){
-				console.log("hello");
-				
-				}else{   // control will come here if array is initialized and 
-					ctx.beginPath();
-				ctx.moveTo(initialX+circleDiff, initialY);
-				ctx.lineTo(initialX+lineLength, initialY);
-				ctx.lineWidth = 2;
-				color = pickRandomColor();
-				ctx.strokeStyle = color;
-				ctx.stroke();
-		createCircle(initialX,initialY);	
-				}
-		}else{   // for initial destination
-			ctx.beginPath();
-			ctx.moveTo(initialX+circleDiff, initialY);
-			ctx.lineTo(initialX+lineLength, initialY);
-			ctx.lineWidth = 2;
-			color = pickRandomColor();
-			ctx.strokeStyle = color;
-			ctx.stroke();
-		createCircle(initialX,initialY);	
-		}
-	}
+	
 
 	function createCircle(x,y,arrIndex){
 		ctx.beginPath();
