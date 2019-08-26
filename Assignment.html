@@ -11,38 +11,37 @@ Start Point: <input type="text" name="startPoint" id="startPoint"/><br>
  End Point : <input type="text" name="endPoint" id="endPoint"/>
 <button type="button" onclick="AddDetails();" id="addFields">Add</button>
 </div>
-<div style="max-height: 800px;max-width:1600px;overflow: scroll;">
-          <canvas id="myCanvas" width="1500px" height="800px" style="border:1px solid #d3d3d3; " >
+<div style="max-height:600px;max-width:1500px;overflow: scroll;">
+          <canvas id="myCanvas" width="1500px" height="650px" style="border:1px solid #d3d3d3; " >
 </div>
 <script>
 var currentTravelDetails = {};
 var travelDetailsArray = [];
 var initialX=100;
 var initialY=300;
-var lineLength = 100;
+var lineLength = 250;
 var circleDiff = 10;
 var flag = false;
-
 function AddDetails(){
 	var start = document.getElementById('startPoint').value;
 	var end = document.getElementById('endPoint').value;
      if(!start || !end ){
-        console.log('Enter proper details');  // validating input properties.
+        alert('Enter proper details');  // validating input properties.
 		return;
 	}else{
 		var travelDetails = [];
 		travelDetails.startPoint = start;
 		travelDetails.endPoint = end;
 		console.log(travelDetails);
-		travelDetailsArray.push(travelDetails); // storing i/o values in array and calling drawmethod.
+		travelDetailsArray.push(travelDetails); // storing input values in array and calling draw method.
 		currentTravelDetails = travelDetails;
+		lineLength = 1250/travelDetailsArray.length;
+		console.log(lineLength);
 		drawCanvas();
 	}
 }  
 	function drawCanvas(){
-	       // debugger;
-			    console.log("clear canvas");  // clearing canvas everytime use presses enter
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);   //clearing canvas with every new input value
 				ctx.rect(20, 20, 1150, 700);
 				 initialX=100;
 				 initialY=300
@@ -52,166 +51,74 @@ function AddDetails(){
 						prev = travelDetailsArray[i-1];
 						next = travelDetailsArray[i+1];
 						if(typeof prev === 'undefined'){
-						console.log("first value draw zero with text");  console.log("inside for loop i = 0");
-						createCircle(initialX, initialY,i);
+							createCircle(initialX, initialY,i);
 						}else{
-							if ( typeof next !== 'undefined') {
+						  if ( typeof next !== 'undefined') {       //checking next value to draw it if consecutive same values found
 							if(((cur.startPoint=== prev.startPoint) &&  (cur.endPoint=== prev.endPoint)) || ((cur.startPoint=== next.startPoint) &&  (cur.endPoint=== next.endPoint))){
-							            console.log("in double condition");
-										if(i == 1){
-										ctx.clearRect(0, 0, canvas.width, canvas.height);
-								    	ctx.rect(20, 20, 1150, 700);
-										createCircle(initialX, initialY-100,i-1);
-										createPlainLine(initialX , initialY-100);
-										initialX = initialX + lineLength + circleDiff;
-										createCircle(initialX, initialY-100,i);
-										initialY= initialY - 100;
-										
-										console.log(" for first point clear canvas and go up and draw both lines");
-										flag=true;
+									if(i == 1){
+										if(((cur.startPoint=== prev.startPoint) &&  (cur.endPoint=== prev.endPoint)) && ((cur.startPoint=== next.startPoint) &&  (cur.endPoint=== next.endPoint))){
+										clearCanvasDrawBothLine(i);
+										}else if((cur.startPoint=== next.startPoint) &&  (cur.endPoint=== next.endPoint)){
+											drawUpCurve(i);
+											i++;
+									  }else{
+									  clearCanvasDrawBothLine(i);
+										}
 									}else{
 										
 											if(flag){
 											 createPlainLine(initialX, initialY);
-											initialX= initialX + lineLength + circleDiff;
 											createCircle(initialX, initialY,i);
-											console.log(" already on level 2	 draw two straight line");
 											}else{
-											   drawArc(initialX, initialY-80, 80, 	25,   75, false,  "blue");
-											   drawArc(initialX+140, initialY, 82, 205, -100, false,  "blue");
-											   initialX= initialX + 140;
-											   initialY= initialY - 80;
-											   createCircle(initialX, initialY,i);
-											   createPlainLine(initialX, initialY);
-												initialX= initialX + lineLength + circleDiff;
-												createCircle(initialX, initialY,i+1);
-												i++;
-											console.log("go up curve and draw both lines and level 1");
-											flag=true;
+											drawUpCurve(i);
+											i++;
 											}									
 										}
-							//		if(level == 2 then straight line)else go up curve 
-									}else if((cur.startPoint=== prev.startPoint) &&  (cur.endPoint=== prev.endPoint)){
-									
-										console.log(" CHECK FLAG NEXT ENABLED and draw a straight line");
-									}
-									else if((prev.endPoint === cur.startPoint)){
-							  //	if(level == 2){ come down curve  }else {  draw straight line } 
-									if(flag){
-									 									 
-									 drawDownArc(initialX-34, initialY+64, 80, 345,   305, true,  "green");
-									 drawDownArc(initialX+116, initialY+4, 82, 160, 120, true,  "green");
-									initialY = initialY+80;
-									initialX = initialX + 80;
-									createCircle(initialX, initialY,i);
-									flag= false;
-									console.log("coming down");
+							
+									}else if((prev.endPoint === cur.startPoint)){
+										if(flag){
+										drawDownCurve(i);
 									}else{
-									
-									if(flag){
-									drawDownArc(initialX-34, initialY+64, 80, 345,   305, true,  "green");
-									 drawDownArc(initialX+116, initialY+4, 82, 160, 120, true,  "green");
-									initialY = initialY+80;
-									initialX = initialX + 80;
+									createPlainLine(initialX, initialY);
 									createCircle(initialX, initialY,i);
-									flag= false;
-									}else{
-									console.log(" NEXT ENABLED check flag and draw  a straight line");
-										createPlainLine(initialX, initialY);
-										initialX= initialX + lineLength + circleDiff;
-										createCircle(initialX, initialY,i);
-									}
-									}
-							  
-								console.log("inside end = statrt");
+										}
 								}else{
 								if(flag){
-									drawDownArc(initialX-34, initialY+64, 80, 345,   305, true,  "green");
-									drawDownArc(initialX+116, initialY+4, 82, 160, 120, true,  "green");
-									initialY = initialY+80;
-									initialX = initialX + 80;
-									createCircle(initialX, initialY,i);
-									flag = false;
+									drawDownCurve(i);
 								}else{
 									createPlainLine(initialX, initialY);
-									initialX= initialX + lineLength + circleDiff;
 									createArrow(color);
 									createCircle(initialX, initialY,i);
-									console.log("line and arrow");
 								 }
 									
 									}
-							}else if((cur.startPoint=== prev.startPoint) &&  (cur.endPoint=== prev.endPoint)){
-							console.log("in single condition");
+							}else if((cur.startPoint=== prev.startPoint) &&  (cur.endPoint=== prev.endPoint)){ 
 										if(i==1){
-										ctx.clearRect(0, 0, canvas.width, canvas.height);
-								    	ctx.rect(20, 20, 1150, 700);
-										createCircle(initialX, initialY-100,i-1);
-										createPlainLine(initialX , initialY-100);
-										initialX = initialX + lineLength + circleDiff;
-										createCircle(initialX, initialY-100,i);
-										console.log("clear canvas and go up and draw both lines");
-										flag=true;
+										clearCanvasDrawBothLine(i);
 										}else{
-										
-										if(flag){
 											 createPlainLine(initialX, initialY);
-											initialX= initialX + lineLength + circleDiff;
-											createCircle(initialX, initialY,i);
-									console.log("straight line");
-										}else{
-											console.log("come down curve and level 1");
-											flag=false;
+											createCircle(initialX, initialY,i);										
 										}
-										console.log("draw the curve to second and a line after checking level and increment i also");
-										console.log("same val upper level");
-										
-										}
-							//		if(level == 2 then straight line)else go up curve 
 							}
-						else if((prev.endPoint === cur.startPoint)){
-							  //	if(level == 2){ come down curve  }else {  draw straight line } 
+						else if((prev.endPoint === cur.startPoint)){ // condition for straight line
 							  if(flag){
-								drawDownArc(initialX-34, initialY+64, 80, 345,   305, true,  "green");
-									 drawDownArc(initialX+116, initialY+4, 82, 160, 120, true,  "green");
-							initialY = initialY+80;
-							initialX = initialX + 80;
-							createCircle(initialX, initialY,i);
-							  flag= false;
-							  console.log("coming down");
+								drawDownCurve(i);
 							  }else{
-							  console.log("draw  a straight line");
 							  createPlainLine(initialX, initialY);
-							  initialX= initialX + lineLength + circleDiff;
 							  createCircle(initialX, initialY,i);
 							  }
-							  
-							  console.log("inside end = statrt");
-							}else{
+						}else{  // condtion for line with arrow
 							
 							if(flag){
-									 drawDownArc(initialX-34, initialY+64, 80, 345,   305, true,  "green");
-									 drawDownArc(initialX+116, initialY+4, 82, 160, 120, true,  "green");
-									initialY = initialY+80;
-									initialX = initialX + 80;
-									createCircle(initialX, initialY,i);
-									flag= false;
-							}else{
+									drawDownCurve(i);
+								}else{
 							createPlainLine(initialX, initialY);
-								initialX= initialX + lineLength + circleDiff;
 								createArrow(color);
 								createCircle(initialX, initialY,i);
-						    console.log("line and arrow");
-							}
-								
-									
-							}
-							
-					//	console.log("value draw line with text"+i);
-									
-			}	
-			console.log('-------------------------------------------------------');
-		}
+						    	}		
+							}	
+			}	// main if condition end
+		}    // for loop end
 }
 	
 	
@@ -224,47 +131,43 @@ function AddDetails(){
 				color = pickRandomColor();
 				ctx.strokeStyle = color;
 				ctx.stroke();
-		//	createCircle(initialX,initialY);	
+			initialX= initialX + lineLength + circleDiff;
 	}
 	
 	
 	
-
 	function createCircle(x,y,arrIndex){
 		ctx.beginPath();
 	ctx.arc(x, y, 5, 0, 2 * Math.PI);
 	ctx.stroke();
 	//creating text with 3 UpperCase character 
-	ctx.fillText((travelDetailsArray[arrIndex].startPoint.substring(0, 3).toUpperCase())+" "+(travelDetailsArray[arrIndex].endPoint.substring(0, 3).toUpperCase()), x-10, y+20, 50);
+	ctx.fillText((travelDetailsArray[arrIndex].startPoint.substring(0, 3).toUpperCase())+" - "+(travelDetailsArray[arrIndex].endPoint.substring(0, 3).toUpperCase()), x-10, y+20, 50);
 	}
-
-		function createArrow(color){
-			ctx.beginPath();
-			ctx.moveTo(initialX-8, initialY-4);
-			ctx.lineTo(initialX-8, initialY+4);
-			ctx.lineTo(initialX, initialY);
-			ctx.closePath();
+	
+	function createArrow(color){
+		ctx.beginPath();
+		ctx.moveTo(initialX-8, initialY-4);
+		ctx.lineTo(initialX-8, initialY+4);
+		ctx.lineTo(initialX, initialY);
+		ctx.closePath();
  
-			// the outline
-			ctx.lineWidth = 3;
-			ctx.strokeStyle = color;
-			ctx.stroke();
+		// the outline
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = color;
+		ctx.stroke();
  
-			// the fill color
-			ctx.fillStyle = color
-			ctx.fill();
-			initialX = initialX + 15;
-		}  
+		// the fill color
+		ctx.fillStyle = color
+		ctx.fill();
+		initialX = initialX + 15;
+	}  
 		
 function drawArc(xPos, yPos, radius, startAngle, endAngle,anticlockwise,lineColor){
 	var startAngle = startAngle * (Math.PI/180);
 	var endAngle   = endAngle   * (Math.PI/180);
-
 	var radius = radius;
-
 	ctx.strokeStyle = lineColor;
 	ctx.lineWidth   = 4;
-
 	ctx.beginPath();
 	ctx.arc(xPos, yPos,
 	radius,
@@ -275,12 +178,9 @@ function drawArc(xPos, yPos, radius, startAngle, endAngle,anticlockwise,lineColo
  function drawDownArc(xPos, yPos, radius, startAngle, endAngle,anticlockwise,lineColor){
 	var startAngle = startAngle * (Math.PI/180);
 	var endAngle   = endAngle   * (Math.PI/180);
-
 	var radius = radius;
-
 	ctx.strokeStyle = lineColor;
 	ctx.lineWidth   = 4;
-
 	ctx.beginPath();
 	ctx.arc(xPos, yPos,
 	radius,
@@ -289,25 +189,47 @@ function drawArc(xPos, yPos, radius, startAngle, endAngle,anticlockwise,lineColo
 	ctx.stroke();
  }
  
-   
-
+   function drawUpCurve(k){
+		drawArc(initialX, initialY-80, 80, 	25, 82, false,  "blue");
+		drawArc(initialX+140, initialY, 82, 205, -100, false,  "blue");
+		initialX= initialX + 138;
+		initialY= initialY - 80;
+		createCircle(initialX, initialY,k);
+		createPlainLine(initialX, initialY);
+		createCircle(initialX, initialY,(k+1));
+		flag=true;
+   }
+   function drawDownCurve(j){	
+		drawDownArc(initialX-34, initialY+64, 80, 345,   305, true,  "blue");
+		drawDownArc(initialX+116, initialY+4, 82, 160, 120, true,  "blue");
+		initialY = initialY+80;
+		initialX = initialX + 85;
+		createCircle(initialX, initialY,j);
+		flag= false;
+   }
+  function clearCanvasDrawBothLine(l){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.rect(20, 20, 1550, 700);
+	createCircle(initialX, initialY-100,l-1);
+	createPlainLine(initialX , initialY-100);
+	createCircle(initialX, initialY-100,l);
+	initialY= initialY - 100;									
+	flag=true;
+   }
 	function pickRandomColor(){
       var rgb = [];
-
 		for(var i = 0; i < 3; i++)
          rgb.push(Math.floor(Math.random() * 255));
-
 		return 'rgb('+ rgb.join(',') +')';
 	}
 	
 	function createCanvas(){
 	 canvas = document.getElementById("myCanvas");
 	 ctx = canvas.getContext("2d");	
-	 ctx.rect(20, 20, 1150, 700);
+	 ctx.rect(20, 20, 1550, 700);
 	 ctx.stroke();
 	}
 createCanvas();
-
 </script> 
 </body>
 <html>
