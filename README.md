@@ -13,3 +13,6 @@ b. If it’s not a continued trip (Eg. Bangalore to Chennai, Ooty to Bangalore) 
 c. If consecutive trips have the same pickup and drop location then those to be in Level.
 
 d. Any number of trips can be added and design should respond accordingly to adjust within the defined dimension.
+
+![alt text](https://user-images.githubusercontent.com/22664213/63689158-df2b9a80-c826-11e9-872d-0bccc13c8b44.png)
+
